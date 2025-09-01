@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kalkulator Kata Spesial</title>
+<style>
+  body {
+    background: #f0e6f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .calculator {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 320px;
+    padding: 20px;
+  }
+  .display {
+    background: #4b0082;
+    color: #fff;
+    font-size: 2rem;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: right;
+    margin-bottom: 20px;
+    min-height: 50px;
+    word-wrap: break-word;
+    user-select: none;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  button {
+    font-size: 1.2rem;
+    padding: 18px;
+    border: none;
+    border-radius: 8px;
+    background: #d8b4fe;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    color: #4b0082;
+    font-weight: 600;
+  }
+  button.operator {
+    background: #7c3aed;
+    color: white;
+  }
+  button.operator:hover {
+    background: #6d28d9;
+  }
+  button:hover {
+    background: #c084fc;
+  }
+  button.equal {
+    background: #4c1d95;
+    color: white;
+    grid-column: span 2;
+  }
+  button.equal:hover {
+    background: #3b0a99;
+  }
+  button.clear {
+    background: #db2777;
+    color: white;
+  }
+  button.clear:hover {
+    background: #be185d;
+  }
+</style>
+</head>
+<body>
+  <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="clear" id="clear">C</button>
+      <button id="backspace">⌫</button>
+      <button class="operator" data-value="/">÷</button>
+      <button class="operator" data-value="*">×</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button class="operator" data-value="-">−</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button class="operator" data-value="+">+</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button class="equal" id="equals">=</button>
+
+      <button data-value="0" style="grid-column: span 2;">0</button>
+      <button data-value=".">.</button>
+    </div>
+  </div>
+
+<script>
+  const display = document.getElementById('display');
+  let currentInput = '0';
+
+  function updateDisplay() {
+    display.textContent = currentInput;
+  }
+
+  function appendValue(val) {
+    if (currentInput === '0' && val !== '.') {
+      currentInput = val;
+    } else {
+      // Prevent multiple dots in a number segment
+      if (val === '.' && currentInput.slice(-1) === '.') return;
+      currentInput += val;
+    }
+    updateDisplay();
+  }
+
+  function clearInput() {
+    currentInput = '0';
+    updateDisplay();
+  }
+
+  function backspace() {
+    if (currentInput.length === 1) {
+      currentInput = '0';
+    } else {
+      currentInput = currentInput.slice(0, -1);
+    }
+    updateDisplay();
+  }
+
+  function calculate() {
+    try {
+      // Find operator in expression (only support one operator)
+      const operators = ['+', '-', '*', '/'];
+      let operatorFound = null;
+      for (const op of operators) {
+        if (currentInput.includes(op)) {
+          operatorFound = op;
+          break;
+        }
+      }
+      if (!operatorFound) {
+        // No operator, just show current input
+        return;
+      }
+      // Split operands
+      const parts = currentInput.split(operatorFound);
+      if (parts.length !== 2) {
+        currentInput = 'Error';
+        updateDisplay();
+        return;
+      }
+      const left = parseFloat(parts[0]);
+      const right = parseFloat(parts[1]);
+      if (isNaN(left) || isNaN(right)) {
+        currentInput = 'Error';
+        updateDisplay();
+        return;
+      }
+
+      // Instead of calculating number, show special words based on operator
+      switch(operatorFound) {
+        case '+':
+          currentInput = 'wopyuu adik';
+          break;
+        case '-':
+          currentInput = 'adikk rinduuuu';
+          break;
+        case '*':
+          currentInput = 'misyuu adik';
+          break;
+        case '/':
+          currentInput = 'adik mwahhh ups';
+          break;
+        default:
+          currentInput = 'Error';
+      }
+    } catch {
+      currentInput = 'Error';
+    }
+    updateDisplay();
+  }
+
+  document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+      const val = button.getAttribute('data-value');
+      if (button.id === 'clear') {
+        clearInput();
+      } else if (button.id === 'backspace') {
+        backspace();
+      } else if (button.id === 'equals') {
+        calculate();
+      } else if (val) {
+        appendValue(val);
+      }
+    });
+  });
+
+  updateDisplay();
+</script>
+</body>
+</html>
